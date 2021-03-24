@@ -3,7 +3,7 @@
 
     Rigkeeper.h
     Created: 20 Feb 2021 9:58:20am
-    Author:  MusicCreator
+    Author:  Damian Greda
 
   ==============================================================================
 */

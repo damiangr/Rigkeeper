@@ -3,7 +3,7 @@
 
     ClipboardOleInit.h
     Created: 2 Mar 2021 10:10:55am
-    Author:  MusicCreator
+    Author:  Damian Greda
 
   ==============================================================================
 */
