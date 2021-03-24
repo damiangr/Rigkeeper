@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="XK9T0s" name="Rigkeeper" projectType="audioplug" useAppConfig="0"
-              jucerFormatVersion="1" pluginFormats="buildAU,buildStandalone,buildVST,buildVST3"
-              addUsingNamespaceToJuceHeader="1" companyName="DamianGreda" companyCopyright="DamianGreda"
-              version="1.0.0" companyWebsite="https://www.facebook.com/toastMidiEditor"
-              companyEmail="toast.midi.editor@gmail.com" pluginVST3Category="Tools"
-              pluginVSTCategory="kPlugCategUnknown">
+              jucerFormatVersion="1" pluginFormats="buildAU,buildVST3" addUsingNamespaceToJuceHeader="1"
+              companyName="DamianGreda" companyCopyright="DamianGreda" version="1.0.0"
+              companyWebsite="https://www.facebook.com/toastMidiEditor" companyEmail="toast.midi.editor@gmail.com"
+              pluginVST3Category="Tools" pluginVSTCategory="kPlugCategUnknown">
   <MAINGROUP id="Sz1cvx" name="Rigkeeper">
     <GROUP id="{1142D106-7A1A-8574-D00A-18B435863B35}" name="BinaryData">
       <FILE id="Xb1lhI" name="background2.svg" compile="0" resource="1" file="Source/Binary/background2.svg"/>
