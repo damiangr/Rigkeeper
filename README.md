@@ -37,7 +37,7 @@ You can also drag and drop files(partially working).
 ## Build
 
 Go to Rigkeeper\JUCE\extras\Projucer\Builds\
-and build projucer with xvode or VisualStudio
+and build projucer with Xcode or VisualStudio
 
 Run Projucer and change Juce and Juce Modules  path in preferences to the one in Rigkeeper project.
 Open Rigkeeper.jucer and buid the plugin.
