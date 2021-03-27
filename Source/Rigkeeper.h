@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 #define MENU_OFFSET 10
-
+#define FILE_SIZE_LIMIT 1048576  //1MB size limit
 
 //==============================================================================
 /*
@@ -76,12 +76,20 @@ public:
 		if (files.size() == 1)
 		{
 			String rigFileFullPath = files[0];
-			setFromFile(rigFileFullPath);
+			if (checkAllowedFileSize(rigFileFullPath, fileSizeLimit))
+			{
+				setFromFile(rigFileFullPath);
+			}
+			else
+			{
+				AlertWindow::showMessageBox(AlertWindow::AlertIconType::WarningIcon, "Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"), "Close", nullptr);
+			}
+			
 			
 		}
 		else
 		{
-			this->setText("Too many files dragged. Only one file is allowed.", dontSendNotification);
+			AlertWindow::showMessageBox(AlertWindow::AlertIconType::WarningIcon, "Error", "Too many files dragged. Only one file is allowed!", "Close", nullptr);
 		}
 		somethingIsBeingDraggedOver = false;
 		this->repaint();
@@ -226,9 +234,16 @@ public:
 			StringArray fileNames;
             auto numfiles = SystemClipboard::getClipboardFileArray(fileNames);
 			if (numfiles >= 0) 
-			{
+			{ 
 				DBG(String(numfiles));
-				setFromFile(tmp[0]);
+				if (checkAllowedFileSize(tmp[0], fileSizeLimit))
+				{
+					setFromFile(tmp[0]);
+				}
+				else
+				{
+					AlertWindow::showMessageBox(AlertWindow::AlertIconType::WarningIcon,"Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"),"Close",nullptr);
+				}
 			}
 		}
 		else if (result == 3)
@@ -253,7 +268,15 @@ public:
 		
 		else if (result >= MENU_OFFSET)
 		{
-			setFromFile(tmp[result - MENU_OFFSET]);
+
+			if (checkAllowedFileSize(tmp[result - MENU_OFFSET], fileSizeLimit))
+			{
+				setFromFile(tmp[result - MENU_OFFSET]);
+			}
+			else
+			{
+				AlertWindow::showMessageBox(AlertWindow::AlertIconType::WarningIcon, "Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"), "Close", nullptr);
+			}
 			DBG(tmp[result - MENU_OFFSET]);
 		}
 	}
@@ -276,9 +299,20 @@ public:
 			Rigkeeper::setText(String(File::createLegalFileName(rigFileName) + "\n"), sendNotification);
 		}
 	}
+	bool checkAllowedFileSize(String file, uint32_t filesize)
+	{
+		File rigFile(file);
+
+		if (rigFile.existsAsFile())
+		{
+			auto size = rigFile.getSize();
+			return (size <= filesize);
+		}
+		else return false;
+	}
 
 private:
-	
+	uint32_t fileSizeLimit = FILE_SIZE_LIMIT;
 	bool isPopupActive = false;
 	std::unique_ptr<XmlElement> svg;
 	std::unique_ptr<Drawable> background_image;

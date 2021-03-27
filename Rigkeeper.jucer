@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="XK9T0s" name="Rigkeeper" projectType="audioplug" useAppConfig="0"
               jucerFormatVersion="1" pluginFormats="buildAU,buildVST3" addUsingNamespaceToJuceHeader="1"
-              companyName="DamianGreda" companyCopyright="DamianGreda" version="1.0.3"
+              companyName="DamianGreda" companyCopyright="DamianGreda" version="1.0.4"
               companyWebsite="https://www.facebook.com/toastMidiEditor" companyEmail="toast.midi.editor@gmail.com"
               pluginVST3Category="Tools" pluginVSTCategory="kPlugCategUnknown">
   <MAINGROUP id="Sz1cvx" name="Rigkeeper">
