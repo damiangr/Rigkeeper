@@ -13,11 +13,13 @@ JUCE VST3/AU plugin for Windows and Mac OS X
 
 copy Rigkeeper.vst3 to the directory:
 Windows: C:\Program Files\Common Files\VST3
-Mac OS X: Library/Audio/Plug-ins/VST3 Rarely used: Users/your username/Library/Audio/Plug-ins/VST3
+Mac OS X: Library/Audio/Plug-ins/VST3
+Rarely used: Users/your username/Library/Audio/Plug-ins/VST3
 
 ### AU
 
-Mac OS X: Library/Audio/Plug-ins/Components Rarely used: Users/your username/Library/Audio/Plug-ins/Components
+Mac OS X: Library/Audio/Plug-ins/Components
+Rarely used: Users/your username/Library/Audio/Plug-ins/Components
 
 ## Usage
 
@@ -32,3 +34,10 @@ Save the DAW session.
 Use right mouse button to open copy menu and select copy . Paste file into Rig Manager or any other desired location . 
 You can also drag and drop files(partially working).
 
+## Build
+
+Go to Rigkeeper\JUCE\extras\Projucer\Builds\
+and build projucer with xvode or VisualStudio
+
+Run Projucer and change Juce and Juce Modules  path in preferences to the one in Rigkeeper project.
+Open Rigkeeper.jucer and buid the plugin.
