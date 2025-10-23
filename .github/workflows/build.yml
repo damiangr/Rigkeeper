@@ -40,26 +40,10 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
     
-    - name: Install ATL/MFC components
-      run: |
-        # Install ATL and MFC which are needed by JUCE
-        $vsInstallerPath = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe"
-        & $vsInstallerPath modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --add Microsoft.VisualStudio.Component.VC.ATL --add Microsoft.VisualStudio.Component.VC.ATLMFC --quiet --norestart
-        Write-Host "ATL/MFC components installation initiated"
-    
-    - name: Build Projucer
-      run: |
-        cd JUCE/extras/Projucer/Builds/VisualStudio2019
-        msbuild Projucer.sln /p:Configuration=Release /p:Platform=x64 /m
-    
-    - name: Generate Visual Studio project
-      run: |
-        & "JUCE/extras/Projucer/Builds/VisualStudio2019/x64/Release/App/Projucer.exe" --resave Rigkeeper.jucer
-    
-    - name: Build Plugin
+    - name: Build Plugin Directly (skip Projucer)
       run: |
         cd Builds/VisualStudio2019
-        msbuild Rigkeeper.sln /p:Configuration=Release /p:Platform=x64
+        msbuild Rigkeeper.sln /p:Configuration=Release /p:Platform=x64 /m
     
     - name: Upload Windows VST3
       uses: actions/upload-artifact@v4
@@ -76,42 +60,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        submodules: 'true'
-    
-    - name: Initialize JUCE submodule
-      run: |
-        git submodule update --init --recursive
+        submodules: recursive
+        fetch-depth: 0
     
     - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: latest-stable
     
-    - name: Fix JUCE module paths for macOS
-      run: |
-        # Update the .jucer file to use the correct JUCE path for CI
-        sed -i '' 's|path=".*JUCE/modules"|path="../../JUCE/modules"|g' Rigkeeper.jucer
-        echo "Updated JUCE module paths in Rigkeeper.jucer"
-        grep 'MODULEPATH' Rigkeeper.jucer | head -5
-    
-    - name: Build Projucer
-      run: |
-        cd JUCE/extras/Projucer/Builds/MacOSX
-        xcodebuild -project Projucer.xcodeproj -configuration Release
-    
-    - name: Generate Xcode project
-      run: |
-        JUCE/extras/Projucer/Builds/MacOSX/build/Release/Projucer.app/Contents/MacOS/Projucer --resave Rigkeeper.jucer
-    
-    - name: Build VST3
+    - name: Build Plugin Directly (skip Projucer)
       run: |
         cd Builds/MacOSX
-        xcodebuild -project Rigkeeper.xcodeproj -target "Rigkeeper - VST3" -configuration Release
-    
-    - name: Build AU
-      run: |
-        cd Builds/MacOSX
-        xcodebuild -project Rigkeeper.xcodeproj -target "Rigkeeper - AU" -configuration Release
+        xcodebuild -project Rigkeeper.xcodeproj -configuration Release clean build
     
     - name: Upload macOS VST3
       uses: actions/upload-artifact@v4
