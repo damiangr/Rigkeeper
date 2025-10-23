@@ -80,6 +80,13 @@ jobs:
       with:
         xcode-version: latest-stable
     
+    - name: Fix JUCE module paths for macOS
+      run: |
+        # Update the .jucer file to use the correct JUCE path for CI
+        sed -i '' 's|path=".*JUCE/modules"|path="../../JUCE/modules"|g' Rigkeeper.jucer
+        echo "Updated JUCE module paths in Rigkeeper.jucer"
+        grep 'MODULEPATH' Rigkeeper.jucer | head -5
+    
     - name: Build Projucer
       run: |
         cd JUCE/extras/Projucer/Builds/MacOSX
