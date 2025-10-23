@@ -110,14 +110,14 @@ public:
 			}
 			else
 			{
-				juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::WarningIcon, "Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"));
+				juce::NativeMessageBox::showMessageBoxAsync(juce::MessageBoxIconType::WarningIcon, "Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"));
 			}
 			
 			
 		}
 		else
 		{
-			juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::WarningIcon, "Error", "Too many files dragged. Only one file is allowed!");
+			juce::NativeMessageBox::showMessageBoxAsync(juce::MessageBoxIconType::WarningIcon, "Error", "Too many files dragged. Only one file is allowed!");
 		}
 		somethingIsBeingDraggedOver = false;
 		this->repaint();
@@ -453,19 +453,19 @@ public:
 				}
 				else
 				{
-					juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::WarningIcon,"Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"));
+					juce::NativeMessageBox::showMessageBoxAsync(juce::MessageBoxIconType::WarningIcon,"Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"));
 				}
 			}
 			else
 			{
-				juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::InfoIcon, "Info", "No files found in clipboard!");
+				juce::NativeMessageBox::showMessageBoxAsync(juce::MessageBoxIconType::InfoIcon, "Info", "No files found in clipboard!");
 			}
 		}
 		else if (result == 3)
 		{			
 			String infoText(String(ProjectInfo::projectName) + " v" + ProjectInfo::versionString + newLine +"author: " + ProjectInfo::companyName + newLine + "e-mail: toast.midi.editor@gmail.com");			
 			infoText += newLine + newLine + "This is free software. You can also buy me a coffee for working on this plugin by visiting the PayPal link.";
-			juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::InfoIcon, "About", infoText);
+			juce::NativeMessageBox::showMessageBoxAsync(juce::MessageBoxIconType::InfoIcon, "About", infoText);
 		}
 		else if (result == 4)
 		{
@@ -478,7 +478,7 @@ public:
 			}
 			else
 			{
-				juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::InfoIcon, "Info", "No file available. Load a rig first.");
+				juce::NativeMessageBox::showMessageBoxAsync(juce::MessageBoxIconType::InfoIcon, "Info", "No file available. Load a rig first.");
 			}
 		}
 		
@@ -494,7 +494,7 @@ public:
 				}
 				else
 				{
-					juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::WarningIcon, "Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"));
+					juce::NativeMessageBox::showMessageBoxAsync(juce::MessageBoxIconType::WarningIcon, "Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"));
 				}
 				DBG("Selected file: " + selectedFile);
 			}
