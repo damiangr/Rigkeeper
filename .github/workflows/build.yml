@@ -1,0 +1,123 @@
+name: Build Rigkeeper Plugin
+
+on:
+  push:
+    branches: [ master, feature/* ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: Build Windows VST3
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        fetch-depth: 0
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+    
+    - name: Build Plugin (using committed project files)
+      run: |
+        cd Builds/VisualStudio2019
+        msbuild Rigkeeper.sln /p:Configuration=Release /p:Platform=x64 /m
+    
+    - name: Create VST3 bundle structure
+      run: |
+        cd Builds/VisualStudio2019/x64/Release/VST3
+        New-Item -ItemType Directory -Force -Path "Rigkeeper.vst3/Contents/x86_64-win"
+        New-Item -ItemType Directory -Force -Path "Rigkeeper.vst3/Contents/Resources"
+        Copy-Item "Rigkeeper.dll" "Rigkeeper.vst3/Contents/x86_64-win/Rigkeeper.vst3"
+        
+    - name: Upload Windows VST3
+      uses: actions/upload-artifact@v4
+      with:
+        name: Rigkeeper-Windows-VST3
+        path: Builds/VisualStudio2019/x64/Release/VST3/Rigkeeper.vst3/
+        if-no-files-found: error
+
+  build-macos:
+    name: Build macOS VST3/AU
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        fetch-depth: 0
+    
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    
+    - name: Build Plugin (using committed project files)
+      run: |
+        cd Builds/MacOSX
+        xcodebuild -project Rigkeeper.xcodeproj -configuration Release clean build
+    
+    - name: Upload macOS VST3
+      uses: actions/upload-artifact@v4
+      with:
+        name: Rigkeeper-macOS-VST3
+        path: Builds/MacOSX/build/Release/Rigkeeper.vst3/
+        if-no-files-found: error
+    
+    - name: Upload macOS AU
+      uses: actions/upload-artifact@v4
+      with:
+        name: Rigkeeper-macOS-AU
+        path: Builds/MacOSX/build/Release/Rigkeeper.component/
+        if-no-files-found: error
+
+  create-release:
+    name: Create Release Package
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+    
+    - name: Create Release ZIP
+      run: |
+        mkdir -p release/Windows
+        mkdir -p release/macOS
+        cp -r Rigkeeper-Windows-VST3/* release/Windows/ || true
+        cp -r Rigkeeper-macOS-VST3/* release/macOS/ || true
+        cp -r Rigkeeper-macOS-AU/* release/macOS/ || true
+        cd release
+        zip -r ../Rigkeeper-All-Platforms.zip .
+    
+    - name: Get version
+      id: version
+      run: echo "version=$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_OUTPUT
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ steps.version.outputs.version }}
+        name: Rigkeeper v${{ steps.version.outputs.version }}
+        draft: false
+        prerelease: false
+        files: Rigkeeper-All-Platforms.zip
+        body: |
+          Automated build of Rigkeeper
+          
+          ## Changes
+          - Windows VST3
+          - macOS VST3 and AU
+          
+          ## Installation
+          - **Windows**: Extract to `C:\Program Files\Common Files\VST3\`
+          - **macOS VST3**: Extract to `~/Library/Audio/Plug-Ins/VST3/`
+          - **macOS AU**: Extract to `~/Library/Audio/Plug-Ins/Components/`
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
