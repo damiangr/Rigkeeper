@@ -22,27 +22,7 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
     
-    - name: Fix JUCE module paths in .jucer file
-      run: |
-        # Replace absolute Windows paths with relative paths for CI
-        (Get-Content Rigkeeper.jucer) -replace 'path="[^"]*JUCE\\modules"', 'path="JUCE/modules"' | Set-Content Rigkeeper.jucer
-        Write-Host "Updated JUCE module paths"
-        Select-String -Path Rigkeeper.jucer -Pattern 'MODULEPATH' | Select-Object -First 3
-    
-    - name: Download pre-built Projucer
-      run: |
-        # Use JUCE's pre-built Projucer from their releases
-        $url = "https://github.com/juce-framework/JUCE/releases/download/8.0.10/juce-8.0.10-windows.zip"
-        Invoke-WebRequest -Uri $url -OutFile "juce.zip"
-        Expand-Archive -Path "juce.zip" -DestinationPath "juce-release"
-        Copy-Item "juce-release/JUCE/Projucer.exe" -Destination "."
-        Write-Host "Projucer downloaded"
-    
-    - name: Generate Visual Studio project
-      run: |
-        .\Projucer.exe --resave Rigkeeper.jucer
-    
-    - name: Build Plugin
+    - name: Build Plugin (using committed project files)
       run: |
         cd Builds/VisualStudio2019
         msbuild Rigkeeper.sln /p:Configuration=Release /p:Platform=x64 /m
@@ -70,26 +50,7 @@ jobs:
       with:
         xcode-version: latest-stable
     
-    - name: Fix JUCE module paths in .jucer file
-      run: |
-        # Replace absolute paths with relative paths for CI
-        sed -i '' 's|path="[^"]*JUCE/modules"|path="JUCE/modules"|g' Rigkeeper.jucer
-        echo "Updated JUCE module paths"
-        grep 'MODULEPATH' Rigkeeper.jucer | head -3
-    
-    - name: Download pre-built Projucer
-      run: |
-        # Use JUCE's pre-built Projucer from their releases
-        curl -L "https://github.com/juce-framework/JUCE/releases/download/8.0.10/juce-8.0.10-macos.zip" -o juce.zip
-        unzip -q juce.zip
-        cp -r "juce-8.0.10-macos/JUCE/Projucer.app" .
-        echo "Projucer downloaded"
-    
-    - name: Generate Xcode project
-      run: |
-        ./Projucer.app/Contents/MacOS/Projucer --resave Rigkeeper.jucer
-    
-    - name: Build Plugin
+    - name: Build Plugin (using committed project files)
       run: |
         cd Builds/MacOSX
         xcodebuild -project Rigkeeper.xcodeproj -configuration Release clean build
