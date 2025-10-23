@@ -1,2 +1,11 @@
-**/Builds
+# Ignore build outputs but keep project files
+**/Builds/**/x64
+**/Builds/**/build
+**/Builds/**/.vs
+**/Builds/**/*.user
+**/Builds/**/*.suo
+**/Builds/**/Debug
+**/Builds/**/Release
+**/Builds/**/*.opendb
+**/Builds/**/*.db
 **/JuceLibraryCode
