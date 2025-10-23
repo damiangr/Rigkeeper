@@ -42,12 +42,12 @@ jobs:
     
     - name: Build Projucer
       run: |
-        cd JUCE/extras/Projucer/Builds/VisualStudio2022
+        cd JUCE/extras/Projucer/Builds/VisualStudio2019
         msbuild Projucer.sln /p:Configuration=Release /p:Platform=x64 /m
     
     - name: Generate Visual Studio project
       run: |
-        & "JUCE/extras/Projucer/Builds/VisualStudio2022/x64/Release/App/Projucer.exe" --resave Rigkeeper.jucer
+        & "JUCE/extras/Projucer/Builds/VisualStudio2019/x64/Release/App/Projucer.exe" --resave Rigkeeper.jucer
     
     - name: Build Plugin
       run: |
