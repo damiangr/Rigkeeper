@@ -1,0 +1,146 @@
+name: Build Rigkeeper Plugin
+
+on:
+  push:
+    branches: [ master, feature/* ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: Build Windows VST3
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        fetch-depth: 0
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+    
+    - name: Build Plugin (using committed project files)
+      run: |
+        cd Builds/VisualStudio2019
+        msbuild Rigkeeper.sln /p:Configuration=Release /p:Platform=x64 /m
+    
+    - name: Create VST3 bundle structure
+      run: |
+        cd Builds/VisualStudio2019/x64/Release/VST3
+        New-Item -ItemType Directory -Force -Path "Rigkeeper.vst3/Contents/x86_64-win"
+        New-Item -ItemType Directory -Force -Path "Rigkeeper.vst3/Contents/Resources"
+        Copy-Item "Rigkeeper.dll" "Rigkeeper.vst3/Contents/x86_64-win/Rigkeeper.vst3"
+        
+    - name: Upload Windows VST3
+      uses: actions/upload-artifact@v4
+      with:
+        name: Rigkeeper-Windows-VST3
+        path: Builds/VisualStudio2019/x64/Release/VST3/Rigkeeper.vst3/
+        if-no-files-found: error
+
+  build-macos:
+    name: Build macOS VST3/AU
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        fetch-depth: 0
+    
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    
+    - name: Build Plugin (using committed project files)
+      run: |
+        cd Builds/MacOSX
+        xcodebuild -project Rigkeeper.xcodeproj -configuration Release clean build
+    
+    - name: Upload macOS VST3
+      uses: actions/upload-artifact@v4
+      with:
+        name: Rigkeeper-macOS-VST3
+        path: Builds/MacOSX/build/Release/Rigkeeper.vst3/
+        if-no-files-found: error
+    
+    - name: Upload macOS AU
+      uses: actions/upload-artifact@v4
+      with:
+        name: Rigkeeper-macOS-AU
+        path: Builds/MacOSX/build/Release/Rigkeeper.component/
+        if-no-files-found: error
+
+  create-release:
+    name: Create Release Package
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+    
+    - name: Create Windows Release ZIP
+      run: |
+        cd Rigkeeper-Windows-VST3
+        zip -r ../Rigkeeper-1.0-Windows-VST3.zip .
+        cd ..
+    
+    - name: Create macOS Release ZIP
+      run: |
+        mkdir -p macOS-Release
+        cp -r Rigkeeper-macOS-VST3 macOS-Release/VST3 || true
+        cp -r Rigkeeper-macOS-AU macOS-Release/AU || true
+        cd macOS-Release
+        zip -r ../Rigkeeper-1.0-macOS.zip .
+        cd ..
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v1.0
+        name: Rigkeeper v1.0
+        draft: false
+        prerelease: false
+        files: |
+          Rigkeeper-1.0-Windows-VST3.zip
+          Rigkeeper-1.0-macOS.zip
+        body: |
+          # Rigkeeper v1.0
+          
+          Enhanced drag-and-drop support for Kemper Profiling Amplifier rig files in DAW sessions.
+          
+          ## Features
+          - ✅ Shell-based drag-drop for Windows (works with Kemper Rig Manager)
+          - ✅ Native drag-drop for macOS
+          - ✅ Clipboard integration
+          - ✅ File size validation (1MB limit)
+          - ✅ Debug logging to Documents/Rigkeeper/
+          
+          ## Downloads
+          - **Rigkeeper-1.0-Windows-VST3.zip** - Windows VST3 plugin
+          - **Rigkeeper-1.0-macOS.zip** - macOS VST3 and AU plugins
+          
+          ## Installation
+          ### Windows
+          1. Extract `Rigkeeper-1.0-Windows-VST3.zip`
+          2. Copy `Rigkeeper.vst3` folder to `C:\Program Files\Common Files\VST3\`
+          
+          ### macOS
+          1. Extract `Rigkeeper-1.0-macOS.zip`
+          2. Copy `VST3/Rigkeeper.vst3` to `~/Library/Audio/Plug-Ins/VST3/`
+          3. Copy `AU/Rigkeeper.component` to `~/Library/Audio/Plug-Ins/Components/`
+          
+          ## Usage
+          - Drag .kipr or .krig files into the plugin
+          - Drag from the plugin to Kemper Rig Manager or file system
+          - Right-click for clipboard operations
+          - Double-click to open file location
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
