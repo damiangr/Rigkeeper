@@ -16,11 +16,26 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        submodules: 'true'
+        submodules: recursive
+        fetch-depth: 0
     
-    - name: Initialize JUCE submodule
+    - name: Verify JUCE submodule
       run: |
-        git submodule update --init --recursive
+        Write-Host "Checking JUCE directory..."
+        if (Test-Path "JUCE") {
+          Write-Host "JUCE directory exists"
+          Get-ChildItem JUCE
+        } else {
+          Write-Host "JUCE directory missing - initializing..."
+          git submodule update --init --recursive
+        }
+        if (Test-Path "JUCE/extras/Projucer/Builds") {
+          Write-Host "Projucer builds directory exists"
+          Get-ChildItem "JUCE/extras/Projucer/Builds"
+        } else {
+          Write-Host "ERROR: Projucer builds directory not found!"
+          exit 1
+        }
     
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
