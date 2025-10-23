@@ -62,6 +62,11 @@ jobs:
         cd Builds/MacOSX
         xcodebuild -project Rigkeeper.xcodeproj -configuration Release clean build
     
+    - name: List build output
+      run: |
+        echo "Build directory contents:"
+        ls -la Builds/MacOSX/build/Release/
+    
     - name: Upload macOS VST3
       uses: actions/upload-artifact@v4
       with:
