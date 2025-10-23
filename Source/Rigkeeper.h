@@ -110,14 +110,14 @@ public:
 			}
 			else
 			{
-				juce::AlertWindow::showMessageBox(juce::MessageBoxIconType::WarningIcon, "Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"));
+				juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::WarningIcon, "Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"));
 			}
 			
 			
 		}
 		else
 		{
-			juce::AlertWindow::showMessageBox(juce::MessageBoxIconType::WarningIcon, "Error", "Too many files dragged. Only one file is allowed!");
+			juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::WarningIcon, "Error", "Too many files dragged. Only one file is allowed!");
 		}
 		somethingIsBeingDraggedOver = false;
 		this->repaint();
@@ -355,12 +355,10 @@ public:
 		}
 		cpyPstMenu.addSeparator();
 		cpyPstMenu.addItem(3, "About", true, false);
-		const int result = cpyPstMenu.showMenu(PopupMenu::Options().withTargetComponent(this));
+		cpyPstMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this), [this](int result) {
 		if (result == 0)
 		{
 			// user dismissed the menu without picking anything
-			cpyPstMenu.dismissAllActiveMenus();
-			this->getTopLevelComponent();
 		}
 		else if (result == 1)
 		{
@@ -455,19 +453,19 @@ public:
 				}
 				else
 				{
-					juce::AlertWindow::showMessageBox(juce::MessageBoxIconType::WarningIcon,"Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"));
+					juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::WarningIcon,"Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"));
 				}
 			}
 			else
 			{
-				juce::AlertWindow::showMessageBox(juce::MessageBoxIconType::InfoIcon, "Info", "No files found in clipboard!");
+				juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::InfoIcon, "Info", "No files found in clipboard!");
 			}
 		}
 		else if (result == 3)
 		{			
 			String infoText(String(ProjectInfo::projectName) + " v" + ProjectInfo::versionString + newLine +"author: " + ProjectInfo::companyName + newLine + "e-mail: toast.midi.editor@gmail.com");			
 			infoText += newLine + newLine + "This is free software. You can also buy me a coffee for working on this plugin by visiting the PayPal link.";
-			juce::AlertWindow::showMessageBox(juce::MessageBoxIconType::InfoIcon, "About", infoText);
+			juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::InfoIcon, "About", infoText);
 		}
 		else if (result == 4)
 		{
@@ -480,7 +478,7 @@ public:
 			}
 			else
 			{
-				juce::AlertWindow::showMessageBox(juce::MessageBoxIconType::InfoIcon, "Info", "No file available. Load a rig first.");
+				juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::InfoIcon, "Info", "No file available. Load a rig first.");
 			}
 		}
 		
@@ -496,11 +494,12 @@ public:
 				}
 				else
 				{
-					juce::AlertWindow::showMessageBox(juce::MessageBoxIconType::WarningIcon, "Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"));
+					juce::NativeMessageBox::showMessageBox(juce::MessageBoxIconType::WarningIcon, "Error", ("File does not exist or exceeds " + String(fileSizeLimit) + " bytes limit !"));
 				}
 				DBG("Selected file: " + selectedFile);
 			}
 		}
+		}); // End of lambda callback
 	}
 
 	bool isNotEmpty()
