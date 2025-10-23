@@ -87,7 +87,7 @@
       <ProgramDatabaseFile>$(IntDir)\Rigkeeper.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>Rigkeeper.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Rigkeeper.lib;ole32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -200,7 +200,7 @@ xcopy /E /H /K /R /Y /I "$(OutDir)\Rigkeeper.vst3" "%CommonProgramW6432%\VST3\Ri
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LargeAddressAware>true</LargeAddressAware>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <AdditionalDependencies>Rigkeeper.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Rigkeeper.lib;ole32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>

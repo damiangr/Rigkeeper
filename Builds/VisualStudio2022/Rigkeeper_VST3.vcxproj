@@ -94,14 +94,14 @@
       <ProgramDatabaseFile>$(IntDir)\Rigkeeper.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>Rigkeeper.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Rigkeeper.lib;ole32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>$(IntDir)\Rigkeeper.bsc</OutputFile>
     </Bscmake>
     <Lib>
-      <AdditionalDependencies>Rigkeeper.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Rigkeeper.lib;ole32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
       <Command>if &quot;$(PROCESSOR_ARCHITECTURE)&quot; == &quot;x86&quot; if defined PROCESSOR_ARCHITEW6432 (
@@ -196,14 +196,14 @@ echo : Info: VST3 manifest generation is disabled for Rigkeeper because a AMD64 
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LargeAddressAware>true</LargeAddressAware>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <AdditionalDependencies>Rigkeeper.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Rigkeeper.lib;ole32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>$(IntDir)\Rigkeeper.bsc</OutputFile>
     </Bscmake>
     <Lib>
-      <AdditionalDependencies>Rigkeeper.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Rigkeeper.lib;ole32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
       <Command>if &quot;$(PROCESSOR_ARCHITECTURE)&quot; == &quot;x86&quot; if defined PROCESSOR_ARCHITEW6432 (
