@@ -10,10 +10,10 @@
 
 #pragma once
 
+#ifdef JUCE_WINDOWS
 #include <ole2.h>
 #include <shlobj.h>
-#include <atlbase.h>
-
+// Remove dependency on ATL - use COM smart pointers directly
 
 class COleInitialize
 {
@@ -52,16 +52,21 @@ inline HRESULT GetUIObjectOfFile(HWND hwnd, LPCWSTR pszPath, REFIID riid, void**
 inline bool copyToClipboard(String file)
 {
 	COleInitialize init;
-	CComPtr<IDataObject> spdto;
+	IDataObject* spdto = nullptr;
 
-	if (SUCCEEDED(init) &&
+	if (SUCCEEDED(init.m_hr) &&
 		SUCCEEDED(GetUIObjectOfFile(nullptr, file.toWideCharPointer(), IID_PPV_ARGS(&spdto))) &&
 		SUCCEEDED(OleSetClipboard(spdto)) &&
 		SUCCEEDED(OleFlushClipboard()))
 	{
+		if (spdto) spdto->Release();
 		return true;
 	}
-	else return false;
+	else 
+	{
+		if (spdto) spdto->Release();
+		return false;
+	}
 }
 
 
@@ -83,9 +88,11 @@ inline UINT getClipboardFileArray(StringArray& fileArray)
 				DragQueryFile(ptr, i, lpszFileName, filenameLength+1);
 				fileArray.add(lpszFileName);
 			}
-			GlobalLock(h);
+			GlobalUnlock(h);
 		}
 		CloseClipboard();
 	}
 	return fileCount;
 }
+
+#endif // JUCE_WINDOWS
