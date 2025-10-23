@@ -16,7 +16,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: 'true'
+    
+    - name: Initialize JUCE submodule
+      run: |
+        git submodule update --init --recursive
     
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
@@ -24,7 +28,7 @@ jobs:
     - name: Build Projucer
       run: |
         cd JUCE/extras/Projucer/Builds/VisualStudio2022
-        msbuild Projucer.sln /p:Configuration=Release /p:Platform=x64
+        msbuild Projucer.sln /p:Configuration=Release /p:Platform=x64 /m
     
     - name: Generate Visual Studio project
       run: |
@@ -50,7 +54,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: 'true'
+    
+    - name: Initialize JUCE submodule
+      run: |
+        git submodule update --init --recursive
     
     - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
