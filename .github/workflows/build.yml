@@ -27,6 +27,13 @@ jobs:
         cd Builds/VisualStudio2019
         msbuild Rigkeeper.sln /p:Configuration=Release /p:Platform=x64 /m
     
+    - name: Create VST3 bundle structure
+      run: |
+        cd Builds/VisualStudio2019/x64/Release/VST3
+        New-Item -ItemType Directory -Force -Path "Rigkeeper.vst3/Contents/x86_64-win"
+        New-Item -ItemType Directory -Force -Path "Rigkeeper.vst3/Contents/Resources"
+        Copy-Item "Rigkeeper.dll" "Rigkeeper.vst3/Contents/x86_64-win/Rigkeeper.vst3"
+        
     - name: Upload Windows VST3
       uses: actions/upload-artifact@v4
       with:
